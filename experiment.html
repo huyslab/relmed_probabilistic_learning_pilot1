@@ -87,23 +87,15 @@
         {
             type: jsPsychBrowserCheck,
             css_classes: ['instructions'],
-            features: ["width", "height",
-                "browser",
+            features: ["browser",
                 "mobile",
                 "fullscreen"
             ],
-            minimum_height: 600,
-            minimum_width: 900,
             inclusion_function: (data) => {
-                return (['chrome', 'firefox'].includes(data.browser)) && 
-                    (data.mobile === false) &&
-                    (data.fullscreen === true)
+                return (['chrome', 'firefox'].includes(data.browser))
             },
             exclusion_message: () => {
                 return `<div class=instructions><p>You must use Chrome or Firefox to complete this study. 
-                    Mobile devices are not allowed. 
-                    Your browser has to be able to dispaly in fullscreen mode, 
-                    and meet the minimal window size requirements.</p>
                     <p>Please reopen this study on a device that matches these criteria, 
                         or return this study to Prolific.</p></div>`
             }
@@ -117,12 +109,6 @@
                 "safe.png"
             ].map(s => "imgs/" + s),
             post_trial_gap: 800
-        },
-        {
-            type: jsPsychFullscreen,
-            fullscreen_mode: true,
-            css_classes: ['instructions'],
-            message: "<p>This study runs in full screen mode.</p><p>Press the button below to continue.</p>"
         }
     ]
     
@@ -161,8 +147,6 @@
 
     const PLT_trial =  {
         timeline: [
-            kick_out,
-            fullscreen_prompt,
         {
             type: jsPsychPLT,
             imgLeft: () => 'imgs/'+ jsPsych.timelineVariable('stimulus_left'),
@@ -293,7 +277,7 @@
             throw new Error('Network response was not ok');
             }
             const structure = await response.json();
-            const sess_structure = structure[session - 1];
+            const sess_structure = structure[session - 1].slice(0,4);
 
             window.totalBlockNumber = sess_structure.length
 
@@ -321,23 +305,11 @@
             type: jsPsychInstructions,
             css_classes: ['instructions'],
             pages: [
-                `<p>Thank you for participating in this study!</p>
-                <p>The purpose of this study is to develop games that can measure people's individual learning tendencies.
-                    In the future, these games will be used to facilitate mental health research ongoing at UCL.</p>`,
-                `<p>When you click continue, your data will be uploaded to the server. This may take up to two minutes.
-                    Please don't close or refresh your browser at this time.</p><p>When data upload is complete, you will be 
-                        rediredted to Prolific to complete your submission</p>`
+                `<p>Thanks for observing this demo!</p>
+                <p>Nothing more will happen, you may close this window.</p>`
             ],
             show_clickable_nav: true,
             data: {trialphase: "experiment_end_message"}
-        },
-        {                
-            type: jsPsychHtmlKeyboardResponse,
-            css_classes: ['instructions'],
-            stimulus: "<p>Uploading data. Please don't close or refresh this window.</p>",
-            data: {trialphase: "end"},
-            data: {trialphase: "data_upload"},
-            on_start: end_experiment
         }
     ]
 
